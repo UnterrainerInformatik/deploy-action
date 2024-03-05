@@ -24,4 +24,4 @@ runs:
   steps:
     - name: Use SSH - mkdir
       shell: bash
-      run: ssh -i .ssh/${{ inputs.key-name }} -p ${{ inputs.port }} -o StrictHostKeyChecking=no ${{ inputs.user }}@${{ inputs.host }} "mkdir -p ${{ inputs.target }}"
+      run: ssh -i .ssh/${{ inputs.key-name }} -p ${{ inputs.port }} -o StrictHostKeyChecking=no ${{ inputs.user }}@${{ inputs.host }} "mkdir -p ${{ inputs.dir }}"
