@@ -1,5 +1,5 @@
-name: 'Deploy a directory using SSH and execute a script'
-description: 'Connects to a server via SSH and copies / runs scripts to / on the target'
+name: 'Mkdir over SSH'
+description: 'Connects to a server via SSH and creates a directory-tree, if it not exists already.'
 inputs:
   key-name:
     description: 'Name of the file the private key is temporarily saved in. Defaults to `identity`.'
@@ -9,8 +9,8 @@ inputs:
     description: 'The SSH port to use. Defaults to `22`.'
     required: true
     default: '22'
-  target:
-    description: 'The directory that should be used on the copy-target. Will be `/app/deploy/<target>` and `/app/data/<target>`.'
+  dir:
+    description: 'The directory that should be created on the remote machine using `mkdir -p`.'
     required: true
   user:
     description: 'The SSH user that will be used to connect to the host.'
@@ -22,15 +22,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Use SSH - mkdir /app/<deploy and data>/<name>
+    - name: Use SSH - mkdir
       shell: bash
-      run: ssh -i .ssh/${{ inputs.key-name }} -p ${{ inputs.port }} -o StrictHostKeyChecking=no ${{ inputs.user }}@${{ inputs.host }} "mkdir -p /app/deploy/${{ inputs.target }} && mkdir -p /app/data/${{ inputs.target }}"
-    - name: Use SSH - chmod 777 ./deploy/*.sh
-      shell: bash
-      run: sudo chmod 777 ./deploy/*.sh
-    - name: Use SSH - rsync deploy dir to target
-      shell: bash
-      run: rsync -azh -e 'ssh -i .ssh/${{ inputs.key-name }} -p '"${{ inputs.port }}"'' ./deploy/ ${{ inputs.user }}@${{ inputs.host }}:/app/deploy/${{ inputs.target }}/
-    - name: Use SSH - start up.sh on target
-      shell: bash
-      run: ssh -i .ssh/${{ inputs.key-name }} -p ${{ inputs.port }} -o StrictHostKeyChecking=no ${{ inputs.user }}@${{ inputs.host }} "cd /app/deploy/${{ inputs.target }} && ./up.sh"
+      run: ssh -i .ssh/${{ inputs.key-name }} -p ${{ inputs.port }} -o StrictHostKeyChecking=no ${{ inputs.user }}@${{ inputs.host }} "mkdir -p ${{ inputs.target }}"
